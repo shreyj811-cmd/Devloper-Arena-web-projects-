@@ -1,3 +1,6 @@
+
+Create an Interactive Task Manager that allows adding, deleting, and marking tasks as complete
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -515,7 +518,7 @@
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-dding Tasks (Naye Tasks Kaise Add Karein)
+  adding Tasks (Naye Tasks Kaise Add Karein)
 Task title field mein apna task ka naam likhein (yeh zaroori hai)
 
 Description field mein task ki details de sakte hain (yeh optional hai)
@@ -551,5 +554,3 @@ Kitne tasks complete ho chuke hain
 Kitne tasks abhi bhi pending hain. 
 
 
-
-</html> 
