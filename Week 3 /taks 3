@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Task Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background-color: #4a00e0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .app-container {
+            display: flex;
+            min-height: 500px;
+        }
+        
+        .task-input-section {
+            flex: 1;
+            padding: 25px;
+            background-color: #f8f9fa;
+            border-right: 1px solid #eaeaea;
+        }
+        
+        .task-list-section {
+            flex: 2;
+            padding: 25px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a00e0;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+        
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: #4a00e0;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #3800b3;
+            transform: translateY(-2px);
+        }
+        
+        .task-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-btn {
+            flex: 1;
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        
+        .filter-btn.active {
+            background-color: #4a00e0;
+            color: white;
+        }
+        
+        .task-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4a00e0;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .task-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .task-item.completed {
+            background-color: #f0f8f0;
+            opacity: 0.8;
+        }
+        
+        .task-checkbox {
+            margin-right: 15px;
+            transform: scale(1.3);
+        }
+        
+        .task-content {
+            flex: 1;
+        }
+        
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .task-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .task-priority {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .priority-high {
+            background-color: #ffe6e6;
+            color: #d63031;
+        }
+        
+        .priority-medium {
+            background-color: #fff4e6;
+            color: #e17055;
+        }
+        
+        .priority-low {
+            background-color: #e6f7ff;
+            color: #0984e3;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .explanation-section {
+            padding: 25px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .explanation-title {
+            color: #4a00e0;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .explanation-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .explanation-item h3 {
+            color: #4a00e0;
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .task-input-section {
+                border-right: none;
+                border-bottom: 1px solid #eaeaea;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interactive Task Manager</h1>
+            <p class="subtitle">Organize your tasks efficiently and boost your productivity</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="task-input-section">
+                <h2>Add New Task</h2>
+                <div class="input-group">
+                    <label for="taskTitle">Task Title</label>
+                    <input type="text" id="taskTitle" placeholder="Enter task title">
+                </div>
+                
+                <div class="input-group">
+                    <label for="taskDescription">Description</label>
+                    <textarea id="taskDescription" placeholder="Enter task description"></textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label for="taskPriority">Priority</label>
+                    <select id="taskPriority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                
+                <button id="addTaskBtn">Add Task</button>
+            </div>
+            
+            <div class="task-list-section">
+                <h2>Your Tasks</h2>
+                
+                <div class="task-filters">
+                    <button class="filter-btn active" data-filter="all">All Tasks</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                </div>
+                
+                <div class="task-stats">
+                    <div class="stat">
+                        <div class="stat-value" id="totalTasks">0</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="completedTasks">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="pendingTasks">0</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                </div>
+                
+                <div id="taskList">
+                    <!-- Tasks will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="explanation-section">
+            <h2 class="explanation-title">How This Task Manager Works</h2>
+            
+            <div class="explanation-item">
+                <h3>Adding Tasks</h3>
+                <p>To add a new task, fill in the task title (required), description (optional), and select a priority level. Then click the "Add Task" button. The task will appear in your task list.</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Marking Tasks as Complete</h3>
+                <p>Click the checkbox next to any task to mark it as completed. Completed tasks will be visually distinguished with a different background and strike-through text.</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Deleting Tasks</h3>
+                <p>Click the "Delete" button next to any task to remove it from your task list permanently.</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Filtering Tasks</h3>
+                <p>Use the filter buttons (All Tasks, Pending, Completed) to view different subsets of your tasks based on their completion status.</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Task Statistics</h3>
+                <p>The statistics section shows the total number of tasks, how many are completed, and how many are still pending.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample tasks for demonstration
+        let tasks = [
+            { id: 1, title: "Complete project proposal", description: "Finish the draft and send for review", priority: "high", completed: false },
+            { id: 2, title: "Buy groceries", description: "Milk, eggs, bread, fruits", priority: "medium", completed: true },
+            { id: 3, title: "Schedule team meeting", description: "Coordinate with all team members", priority: "low", completed: false }
+        ];
+
+        // DOM Elements
+        const taskTitleInput = document.getElementById('taskTitle');
+        const taskDescriptionInput = document.getElementById('taskDescription');
+        const taskPrioritySelect = document.getElementById('taskPriority');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const taskList = document.getElementById('taskList');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const totalTasksEl = document.getElementById('totalTasks');
+        const completedTasksEl = document.getElementById('completedTasks');
+        const pendingTasksEl = document.getElementById('pendingTasks');
+
+        // Current filter
+        let currentFilter = 'all';
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTasks();
+            updateStats();
+            
+            // Event Listeners
+            addTaskBtn.addEventListener('click', addTask);
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    // Update current filter
+                    currentFilter = this.getAttribute('data-filter');
+                    // Re-render tasks with new filter
+                    renderTasks();
+                });
+            });
+        });
+
+        // Add a new task
+        function addTask() {
+            const title = taskTitleInput.value.trim();
+            const description = taskDescriptionInput.value.trim();
+            const priority = taskPrioritySelect.value;
+            
+            if (title === '') {
+                alert('Please enter a task title');
+                return;
+            }
+            
+            // Create new task object
+            const newTask = {
+                id: Date.now(), // Simple ID generation
+                title: title,
+                description: description,
+                priority: priority,
+                completed: false
+            };
+            
+            // Add to tasks array
+            tasks.push(newTask);
+            
+            // Clear input fields
+            taskTitleInput.value = '';
+            taskDescriptionInput.value = '';
+            taskPrioritySelect.value = 'low';
+            
+            // Update UI
+            renderTasks();
+            updateStats();
+        }
+
+        // Delete a task
+        function deleteTask(id) {
+            tasks = tasks.filter(task => task.id !== id);
+            renderTasks();
+            updateStats();
+        }
+
+        // Toggle task completion status
+        function toggleTaskCompletion(id) {
+            tasks = tasks.map(task => {
+                if (task.id === id) {
+                    return { ...task, completed: !task.completed };
+                }
+                return task;
+            });
+            renderTasks();
+            updateStats();
+        }
+
+        // Render tasks based on current filter
+        function renderTasks() {
+            taskList.innerHTML = '';
+            
+            let filteredTasks = tasks;
+            
+            // Apply filter
+            if (currentFilter === 'pending') {
+                filteredTasks = tasks.filter(task => !task.completed);
+            } else if (currentFilter === 'completed') {
+                filteredTasks = tasks.filter(task => task.completed);
+            }
+            
+            if (filteredTasks.length === 0) {
+                taskList.innerHTML = '<p style="text-align: center; padding: 20px; color: #6c757d;">No tasks found. Add a new task to get started!</p>';
+                return;
+            }
+            
+            // Create task elements
+            filteredTasks.forEach(task => {
+                const taskItem = document.createElement('div');
+                taskItem.className = `task-item ${task.completed ? 'completed' : ''}`;
+                
+                taskItem.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
+                    <div class="task-content">
+                        <div class="task-title">${task.completed ? `<s>${task.title}</s>` : task.title}</div>
+                        <div class="task-description">${task.description}</div>
+                    </div>
+                    <span class="task-priority priority-${task.priority}">${task.priority.toUpperCase()}</span>
+                    <div class="task-actions">
+                        <button class="delete-btn">Delete</button>
+                    </div>
+                `;
+                
+                // Add event listeners
+                const checkbox = taskItem.querySelector('.task-checkbox');
+                checkbox.addEventListener('change', () => toggleTaskCompletion(task.id));
+                
+                const deleteBtn = taskItem.querySelector('.delete-btn');
+                deleteBtn.addEventListener('click', () => deleteTask(task.id));
+                
+                taskList.appendChild(taskItem);
+            });
+        }
+
+        // Update task statistics
+        function updateStats() {
+            const totalTasks = tasks.length;
+            const completedTasks = tasks.filter(task => task.completed).length;
+            const pendingTasks = totalTasks - completedTasks;
+            
+            totalTasksEl.textContent = totalTasks;
+            completedTasksEl.textContent = completedTasks;
+            pendingTasksEl.textContent = pendingTasks;
+        }
+    </script>
+</body>
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+dding Tasks (Naye Tasks Kaise Add Karein)
+Task title field mein apna task ka naam likhein (yeh zaroori hai)
+
+Description field mein task ki details de sakte hain (yeh optional hai)
+
+Priority dropdown se apni task ki importance select karein (High, Medium, Low)
+
+"Add Task" button click karein, aapka task list mein add ho jayega
+
+2. Marking Tasks as Complete (Tasks Ko Complete Kaise Karein)
+Har task ke saamne ek checkbox hai
+
+Is checkbox ko click karke aap task ko complete mark kar sakte hain
+
+Complete kiye gaye tasks alag color mein dikhenge aur unke titles par line draw ho jayegi
+
+3. Deleting Tasks (Tasks Ko Delete Kaise Karein)
+Har task ke saath ek "Delete" button hai
+
+Is button ko click karke aap task ko permanently delete kar sakte hain
+
+4. Filtering Tasks (Tasks Ko Filter Kaise Karein)
+Upar teen filter buttons hain: All Tasks, Pending, Completed
+
+In buttons se aap apne tasks ko unki completion status ke hisaab se filter kar sakte hain
+
+5. Task Statistics (Task Statistics)
+Statistics section aapko batata hai:
+
+Total kitne tasks hain
+
+Kitne tasks complete ho chuke hain
+
+Kitne tasks abhi bhi pending hain. 
+
+
+
+</html> 
